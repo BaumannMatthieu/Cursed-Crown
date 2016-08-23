@@ -16,17 +16,20 @@ character = {
         
         data = {
             {
-                name = "start",
+                name = "stance",
+                dir = 3,
                 frames = 9,
                 first = 0
             },
             {
                 name = "open_right",
+                dir = 3,
                 frames = 9,
                 first = 9
             },
             {
                 name = "open_left",
+                dir = 3,
                 frames = 9,
                 first = 18
             }
@@ -34,10 +37,10 @@ character = {
     },
     interaction = {
         image_clic = "data/animations/misci/chest_clic.png",
-        handler = function(script)
+        handler = function(chest, script)
             print("start interaction")
             
-            script:playAnimation("start");
+            script:playAnimation(chest, "stance", 3);
 
             print("end interaction")
         end

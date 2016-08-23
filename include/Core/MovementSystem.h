@@ -32,7 +32,8 @@ class Movement {
                 CaracteristicsComponentPtr caract = std::static_pointer_cast<CaracteristicsComponent>(components[4]);
 
                 if(norme(movement->m_goal - position->m_position) <= (1 << 3)) {
-                    animation->m_animation_key = getStanceAnimationId(movement->m_dir2);
+                    animation->m_animation_key = std::pair<std::string, MovementComponent::Direction>("stance", movement->m_dir2);
+                    //animation->m_animation_key = getStanceAnimationId(movement->m_dir2);
 
                     entity->deleteComponent<MovementComponent>();
                 } else {
@@ -47,12 +48,14 @@ class Movement {
                         direction = caract->m_displacement_speed*movement->m_d2/norme(movement->m_d2);
                         movement->m_d2 = movement->m_d2 - direction; 
 
-                        animation->m_animation_key = getRunAnimationId(movement->m_dir2);
+                        //animation->m_animation_key = getRunAnimationId(movement->m_dir2);
+                        animation->m_animation_key = std::pair<std::string, MovementComponent::Direction>("run", movement->m_dir2);
                     } else {
                         direction = caract->m_displacement_speed*movement->m_d1/norme(movement->m_d1);
                         movement->m_d1 = movement->m_d1 - direction; 
                         
-                        animation->m_animation_key = getRunAnimationId(movement->m_dir1);
+                        //animation->m_animation_key = getRunAnimationId(movement->m_dir1);
+                        animation->m_animation_key = std::pair<std::string, MovementComponent::Direction>("run", movement->m_dir1);
                     }
 
                     position->m_position += direction;
@@ -77,7 +80,7 @@ class Movement {
     }
 
     static void moveAnimation(AnimatedComponentPtr animation, const sf::Vector2f& delta_position) {
-        for(std::map<std::string, AnimationPtr>::iterator it = animation->m_animations.begin(); it != animation->m_animations.end(); ++it) {
+        for(std::map<std::pair<std::string, MovementComponent::Direction>, AnimationPtr>::iterator it = animation->m_animations.begin(); it != animation->m_animations.end(); ++it) {
             AnimationPtr current_anim = it->second;
             for(unsigned int i = 0; i < current_anim->m_vertex_arrays.size(); ++i) {
      
@@ -165,6 +168,39 @@ class Movement {
         movement->m_dir2 = dir_2;
     }
 
+    static MovementComponent::Direction getDirection(const sf::Vector2f& vec) {
+        float angle = getAngle(vec, sf::Vector2f(1.f, 0.f));
+        if(angle <= PI/8.f||angle > 15*PI/8.f) {
+            return MovementComponent::Direction::E;
+        }
+
+        if(angle <= 3*PI/8.f) {
+            return MovementComponent::Direction::NE;
+        }
+
+        if(angle <= 5*PI/8.f) {
+            return MovementComponent::Direction::N;
+        }
+
+        if(angle <= 7*PI/8.f) {
+            return MovementComponent::Direction::NW;
+        }
+
+        if(angle <= 9*PI/8.f) {
+            return MovementComponent::Direction::W;
+        }
+
+        if(angle <= 11*PI/8.f) {
+            return MovementComponent::Direction::SW;
+        }
+
+        if(angle <= 13*PI/8.f) {
+            return MovementComponent::Direction::S;
+        }
+
+        return MovementComponent::Direction::SE;
+    }
+
     static sf::Vector2f getDirectionVector(MovementComponent::Direction direction) {
         sf::Vector2f vec;
 
@@ -200,7 +236,7 @@ class Movement {
         normalize(vec);
         return vec;
     }
-
+/*
     static std::string getRunAnimationId(MovementComponent::Direction direction) {
         std::string id;
 
@@ -269,6 +305,6 @@ class Movement {
         }
 
         return id;
-    }
+    }*/
 };
 

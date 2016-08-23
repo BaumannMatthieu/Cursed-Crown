@@ -15,6 +15,7 @@
 #include "../Core/CaracteristicsComponent.h"
 #include "../Core/InteractionComponent.h"
 #include "../Core/AnimatedComponent.h"
+#include "../Core/MovementComponent.h"
 #include "../Core/SpriteComponent.h"
 #include "../Core/PositionComponent.h"
 #include "../Core/EnemyComponent.h"
@@ -22,6 +23,8 @@
 #include "../Core/Maths.h"
 #include "../Core/Log.h"
 #include "../Core/System.h"
+
+#include "../Core/MovementSystem.h"
 
 class Interaction {
     public:
@@ -65,13 +68,14 @@ class Interaction {
 
                                 if(color_pixel == sf::Color::Black) {
                                     if(!System<Interaction>::findComponent<EnemyComponent>(entity, components)) {
-                                        m_entity = entity;
+                                        //m_entity = entity;
 
-                                        std::string thread = (*(manager_threads->m_create))(*(script->m_handler), this); 
+                                        std::string thread = (*(manager_threads->m_create))(*(script->m_handler), entity, this); 
                                         m_thread_id = thread;
                                     } else {
                                         // play animation updated with entityptr parameter
                                         LOG("ATTACK");
+                                        playAnimation(player, "attack", Movement::getDirection(pos->m_position - pos_player->m_position));
                                     }
                                 }
                             }
@@ -81,7 +85,15 @@ class Interaction {
 
                 player->deleteComponent<InteractionComponent>();
             } else {
-                // play animation updated with entityptr parameter
+                std::vector<ComponentPtr> animated_player;
+                if(System<Interaction>::findComponent<AnimatedComponent>(player, animated_player)) {
+                    AnimatedComponentPtr animated = std::static_pointer_cast<AnimatedComponent>(animated_player[0]);
+                    if(animated->m_animation_key.first == "attack") {
+                        animated->m_animation_key = std::pair<std::string, MovementComponent::Direction>("stance", animated->m_animation_key.second);
+                    }
+                }
+                
+                //playAnimation(player, "stance", MovementComponent::Direction::SE);
             }
         }
 
@@ -90,36 +102,37 @@ class Interaction {
         }
 
 
-        void playAnimation(const std::string& name_animation) const {
+        void playAnimation(EntityPtr entity, const std::string& name_animation, unsigned int direction) const {
             std::vector<ComponentPtr> components;
 
-            if(System<Interaction>::findComponent<AnimatedComponent>(m_entity, components)) {
+            if(System<Interaction>::findComponent<AnimatedComponent>(entity, components)) {
                 AnimatedComponentPtr animation = std::static_pointer_cast<AnimatedComponent>(components[0]);
-                animation->m_animation_key = name_animation;
-                if(animation->m_animations[name_animation]->m_started) {
+
+                std::pair<std::string, MovementComponent::Direction> key(name_animation, static_cast<MovementComponent::Direction>(direction));
+                animation->m_animation_key = key;
+                if(animation->m_animations[key]->m_started) {
                     return;
                 }
 
-                animation->m_animations[name_animation]->m_started = true;
-                animation->m_animations[name_animation]->m_time_begin = Time::clock.getElapsedTime().asMilliseconds();
-                m_entity->addComponent<PlayAnimationComponent>(std::make_shared<PlayAnimationComponent>());
+                animation->m_animations[key]->m_started = true;
+                animation->m_animations[key]->m_time_begin = Time::clock.getElapsedTime().asMilliseconds();
+                entity->addComponent<PlayAnimationComponent>(std::make_shared<PlayAnimationComponent>());
             }
         }
 
-        void changeAlignment(CaracteristicsComponent::Alignment alignement) const {
+        void changeAlignment(EntityPtr entity, CaracteristicsComponent::Alignment alignement) const {
             std::vector<ComponentPtr> components;
 
-            if(System<Interaction>::findComponent<CaracteristicsComponent>(m_entity, components)) {
+            if(System<Interaction>::findComponent<CaracteristicsComponent>(entity, components)) {
                 CaracteristicsComponentPtr caracts = std::static_pointer_cast<CaracteristicsComponent>(components[0]);
                 caracts->m_alignment = alignement;
 
                 if(alignement > CaracteristicsComponent::Alignment::NEUTRAL) {
-                    m_entity->addComponent<EnemyComponent>(std::make_shared<EnemyComponent>());
+                    entity->addComponent<EnemyComponent>(std::make_shared<EnemyComponent>());
                 }
             }
         }
 
     private:
-        EntityPtr               m_entity;
         std::string             m_thread_id;
 };

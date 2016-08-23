@@ -37,84 +37,148 @@ character = {
         origin_y = 100.0,
         data = {
             {
-                name = "stance_w",
+                name = "stance",
+                dir = 5,
                 frames = 4,
                 first = 0
             },
             {
-                name = "stance_nw",
+                name = "stance",
+                dir = 6,
                 frames = 4,
                 first = 32
             },
             {
-                name = "stance_n",
+                name = "stance",
+                dir = 7,
                 frames = 4,
                 first = 64
             },
             {
-                name = "stance_ne",
+                name = "stance",
+                dir = 0,
                 frames = 4,
                 first = 96
             },
             {
-                name = "stance_e",
+                name = "stance",
+                dir = 1,
                 frames = 4,
                 first = 128
             },
             {
-                name = "start",
+                name = "stance",
+                dir = 2,
                 frames = 4,
                 first = 160
             },
             {
-                name = "stance_s",
+                name = "stance",
+                dir = 3,
                 frames = 4,
                 first = 192
             },
             {
-                name = "stance_sw",
+                name = "stance",
+                dir = 4,
                 frames = 4,
                 first = 224
             },
             {
-                name = "run_w",
+                name = "run",
+                dir = 5,
                 frames = 8,
                 first = 4
             },
             {
-                name = "run_nw",
+                name = "run",
+                dir = 6,
                 frames = 8,
                 first = 36
             },
             {
-                name = "run_n",
+                name = "run",
+                dir = 7,
                 frames = 8,
                 first = 68
             },
             {
-                name = "run_ne",
+                name = "run",
+                dir = 0,
                 frames = 8,
                 first = 100
             },
             {
-                name = "run_e",
+                name = "run",
+                dir = 1,
                 frames = 8,
                 first = 132
             },
             {
-                name = "run_se",
+                name = "run",
+                dir = 2,
                 frames = 8,
                 first = 164
             },
             {
-                name = "run_s",
+                name = "run",
+                dir = 3,
                 frames = 8,
                 first = 196
             },
             {
-                name = "run_sw",
+                name = "run",
+                dir = 4,
                 frames = 8,
                 first = 228
+            },
+            {
+                name = "attack",
+                dir = 5,
+                frames = 8,
+                first = 12
+            },
+            {
+                name = "attack",
+                dir = 6,
+                frames = 8,
+                first = 44
+            },
+            {
+                name = "attack",
+                dir = 7,
+                frames = 8,
+                first = 76
+            },
+            {
+                name = "attack",
+                dir = 0,
+                frames = 8,
+                first = 108
+            },
+            {
+                name = "attack",
+                dir = 1,
+                frames = 8,
+                first = 140
+            },
+            {
+                name = "attack",
+                dir = 2,
+                frames = 8,
+                first = 172
+            },
+            {
+                name = "attack",
+                dir = 3,
+                frames = 8,
+                first = 204
+            },
+            {
+                name = "attack",
+                dir = 4,
+                frames = 8,
+                first = 236
             }
         }
     }

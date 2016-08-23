@@ -141,13 +141,14 @@ class ScriptEntity : public Script {
                         sprite->m_height_texture = LuaData<unsigned int>::wrap(*table_animation, "height_texture");
 
                         sprite->m_origin = sf::Vector2f(LuaData<float>::wrap(*table_animation, "origin_x"),
-                                                           LuaData<float>::wrap(*table_animation, "origin_y"));
+                                                        LuaData<float>::wrap(*table_animation, "origin_y"));
 
                         std::vector<std::shared_ptr<LuaRef>> data_animation = LuaData<std::vector<std::shared_ptr<LuaRef>>>::wrap(*table_animation, "data");
 
                         for(unsigned int i = 0; i < data_animation.size(); ++i) {
                             AnimationPtr data = std::make_shared<Animation>();
                             data->m_name = LuaData<std::string>::wrap(*data_animation[i], "name");
+                            data->m_direction = static_cast<MovementComponent::Direction>(LuaData<unsigned int>::wrap(*data_animation[i], "dir"));
 
                             data->m_frames = LuaData<unsigned int>::wrap(*data_animation[i], "frames");
                             data->m_first = LuaData<unsigned int>::wrap(*data_animation[i], "first");
@@ -178,10 +179,10 @@ class ScriptEntity : public Script {
 
                                 data->m_vertex_arrays.push_back(vertex_array);
                             }
-
-                            animation->m_animations.insert(std::pair<std::string, AnimationPtr>(data->m_name, data));
+                            std::pair<std::string, MovementComponent::Direction> key(data->m_name, data->m_direction);
+                            animation->m_animations.insert(std::pair<std::pair<std::string, MovementComponent::Direction>, AnimationPtr>(key, data));
                         }
-                        animation->m_animation_key = "start";
+                        animation->m_animation_key = std::pair<std::string, MovementComponent::Direction>("stance", MovementComponent::Direction::SE);
 
                         sprite->m_vertex_array = &(animation->m_animations[animation->m_animation_key]->m_vertex_arrays[0]);
 
