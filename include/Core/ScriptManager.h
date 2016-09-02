@@ -36,9 +36,10 @@ class ScriptManager {
                 .beginClass<Interaction>("InteractSyst")
                     .addConstructor<void(*)(void)>()
                     .addFunction("say", &Interaction::say)
-                    .addFunction("playAnimation", &Interaction::playAnimation)
                     .addFunction("changeAlignment", &Interaction::changeAlignment)
                 .endClass()
+                .addFunction("playAnimation", &Interaction::playAnimation)
+                .addFunction("dead", &Death::dead)
                 .beginClass<sf::Vector2f>("Position")
                     .addConstructor<void(*)(float, float)>()
                 .endClass()
@@ -48,6 +49,7 @@ class ScriptManager {
                 .beginClass<Attack>("AttackSyst")
                     .addConstructor<void(*)(void)>()
                     .addFunction("deplace", &Attack::deplace)
+                    .addFunction("attack", &Attack::attack)
                 .endClass();
         
             m_main = std::make_shared<ScriptRegister>(m_lua_state, "register_scripts.lua");

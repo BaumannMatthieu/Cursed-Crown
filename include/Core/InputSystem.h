@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "../Core/Entity.h"
+#include "../Core/Player.h"
 
 #include "../Core/PlayerComponent.h"
 #include "../Core/MovementComponent.h"
@@ -16,43 +17,45 @@
 class Input {
     public:
     void run(std::vector<EntityPtr>& entitys) {
-        EntityPtr          entity_player = nullptr;
-        PlayerComponentPtr player = nullptr;
+        std::vector<ComponentPtr> components;
+        if(!System<Input>::findComponent<DeathComponent>(player, components)) {
+            PlayerComponentPtr player_component = nullptr;
 
-        MapComponentPtr map = nullptr;
-        for(auto entity : entitys) {
-            std::vector<ComponentPtr> components;
-            if(System<Input>::findComponent<PlayerComponent>(entity, components)) {
-                player = std::static_pointer_cast<PlayerComponent>(components[0]);
-                entity_player = entity;
+            if(System<Input>::findComponent<PlayerComponent>(player, components)) {
+                player_component = std::static_pointer_cast<PlayerComponent>(components[0]);
             }
 
-            if(System<Input>::findComponent<MapComponent>(entity, components)) {
-                map = std::static_pointer_cast<MapComponent>(components[0]);
+            MapComponentPtr map = nullptr;
+            for(auto entity : entitys) {
+                std::vector<ComponentPtr> components_map;
+
+                if(System<Input>::findComponent<MapComponent>(entity, components_map)) {
+                    map = std::static_pointer_cast<MapComponent>(components_map[0]);
+                }
             }
-        }
 
-        //Mouse clic manager
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)||sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-            // Retriving the position from the mouse clic
-            sf::Vector2f view(player->m_view.getCenter() - player->m_view.getSize()*0.5f);
+            //Mouse clic manager
+            if(sf::Mouse::isButtonPressed(sf::Mouse::Left)||sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+                // Retriving the position from the mouse clic
+                sf::Vector2f view(player_component->m_view.getCenter() - player_component->m_view.getSize()*0.5f);
 
-            if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                sf::Vector2f map_pos(map->m_origin_x, map->m_origin_y);
-                sf::Vector2f origin(map_pos - view);
+                if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                    sf::Vector2f map_pos(map->m_origin_x, map->m_origin_y);
+                    sf::Vector2f origin(map_pos - view);
 
-                // Get the position in the isometric world
-                sf::Vector2f pos = getMousePosition(origin);
+                    // Get the position in the isometric world
+                    sf::Vector2f pos = getMousePosition(origin);
 
-                // Add a Movement Component to the player
-                MovementComponentPtr movement = std::make_shared<MovementComponent>();
-                movement->m_goal = pos;
-                entity_player->addComponent<MovementComponent>(movement);
-            } else if(sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-                // Add a Movement Component to the player
-                InteractionComponentPtr interaction = std::make_shared<InteractionComponent>();
-                interaction->m_clic = view + sf::Vector2f(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y);
-                entity_player->addComponent<InteractionComponent>(interaction);
+                    // Add a Movement Component to the player
+                    MovementComponentPtr movement = std::make_shared<MovementComponent>();
+                    movement->m_goal = pos;
+                    player->addComponent<MovementComponent>(movement);
+                } else if(sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+                    // Add a Movement Component to the player
+                    InteractionComponentPtr interaction = std::make_shared<InteractionComponent>();
+                    interaction->m_clic = view + sf::Vector2f(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y);
+                    player->addComponent<InteractionComponent>(interaction);
+                }
             }
         }
 

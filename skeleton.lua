@@ -11,7 +11,7 @@ character = {
         touch = 18.0,
         esquive = 0.0,
         
-        displacement_speed = 3.0,
+        displacement_speed = 4.0,
         max_weight = 20.0,
         gold = math.random(10),
 
@@ -28,158 +28,196 @@ character = {
         width_sprite = 128,
         height_sprite = 128,
 
-        repeated = true, 
-
         width_texture = 4096,
         height_texture = 1024,
 
         origin_x = 64.0,
         origin_y = 100.0,
-        data = {
+        tex_coords = { 
             {
-                name = "stance",
-                dir = 5,
-                frames = 4,
-                first = 0
+                name = "attack",
+                repeated = true,
+                data = {
+                    {
+                        dir = 5,
+                        frames = 8,
+                        first = 12
+                    },
+                    {
+                        dir = 6,
+                        frames = 8,
+                        first = 44
+                    },
+                    {
+                        dir = 7,
+                        frames = 8,
+                        first = 76
+                    },
+                    {
+                        dir = 0,
+                        frames = 8,
+                        first = 108
+                    },
+                    {
+                        dir = 1,
+                        frames = 8,
+                        first = 140
+                    },
+                    {
+                        dir = 2,
+                        frames = 8,
+                        first = 172
+                    },
+                    {
+                        dir = 3,
+                        frames = 8,
+                        first = 204
+                    },
+                    {
+                        dir = 4,
+                        frames = 8,
+                        first = 236
+                    }
+                }
             },
             {
                 name = "stance",
-                dir = 6,
-                frames = 4,
-                first = 32
-            },
-            {
-                name = "stance",
-                dir = 7,
-                frames = 4,
-                first = 64
-            },
-            {
-                name = "stance",
-                dir = 0,
-                frames = 4,
-                first = 96
-            },
-            {
-                name = "stance",
-                dir = 1,
-                frames = 4,
-                first = 128
-            },
-            {
-                name = "stance",
-                dir = 2,
-                frames = 4,
-                first = 160
-            },
-            {
-                name = "stance",
-                dir = 3,
-                frames = 4,
-                first = 192
-            },
-            {
-                name = "stance",
-                dir = 4,
-                frames = 4,
-                first = 224
+                repeated = true,
+                data = {
+                    {
+                        dir = 5,
+                        frames = 4,
+                        first = 0
+                    },
+                    {
+                        dir = 6,
+                        frames = 4,
+                        first = 32
+                    },
+                    {
+                        dir = 7,
+                        frames = 4,
+                        first = 64
+                    },
+                    {
+                        dir = 0,
+                        frames = 4,
+                        first = 96
+                    },
+                    {
+                        dir = 1,
+                        frames = 4,
+                        first = 128
+                    },
+                    {
+                        dir = 2,
+                        frames = 4,
+                        first = 160
+                    },
+                    {
+                        dir = 3,
+                        frames = 4,
+                        first = 192
+                    },
+                    {
+                        dir = 4,
+                        frames = 4,
+                        first = 224
+                    }
+                }
             },
             {
                 name = "run",
-                dir = 5,
-                frames = 8,
-                first = 4
+                repeated = true,
+                data = {
+                    {
+                        dir = 5,
+                        frames = 8,
+                        first = 4
+                    },
+                    {
+                        dir = 6,
+                        frames = 8,
+                        first = 36
+                    },
+                    {
+                        dir = 7,
+                        frames = 8,
+                        first = 68
+                    },
+                    {
+                        dir = 0,
+                        frames = 8,
+                        first = 100
+                    },
+                    {
+                        dir = 1,
+                        frames = 8,
+                        first = 132
+                    },
+                    {
+                        dir = 2,
+                        frames = 8,
+                        first = 164
+                    },
+                    {
+                        dir = 3,
+                        frames = 8,
+                        first = 196
+                    },
+                    {
+                        dir = 4,
+                        frames = 8,
+                        first = 228
+                    }
+                }
             },
             {
-                name = "run",
-                dir = 6,
-                frames = 8,
-                first = 36
-            },
-            {
-                name = "run",
-                dir = 7,
-                frames = 8,
-                first = 68
-            },
-            {
-                name = "run",
-                dir = 0,
-                frames = 8,
-                first = 100
-            },
-            {
-                name = "run",
-                dir = 1,
-                frames = 8,
-                first = 132
-            },
-            {
-                name = "run",
-                dir = 2,
-                frames = 8,
-                first = 164
-            },
-            {
-                name = "run",
-                dir = 3,
-                frames = 8,
-                first = 196
-            },
-            {
-                name = "run",
-                dir = 4,
-                frames = 8,
-                first = 228
-            },
-            {
-                name = "attack",
-                dir = 5,
-                frames = 8,
-                first = 12
-            },
-            {
-                name = "attack",
-                dir = 6,
-                frames = 8,
-                first = 44
-            },
-            {
-                name = "attack",
-                dir = 7,
-                frames = 8,
-                first = 76
-            },
-            {
-                name = "attack",
-                dir = 0,
-                frames = 8,
-                first = 108
-            },
-            {
-                name = "attack",
-                dir = 1,
-                frames = 8,
-                first = 140
-            },
-            {
-                name = "attack",
-                dir = 2,
-                frames = 8,
-                first = 172
-            },
-            {
-                name = "attack",
-                dir = 3,
-                frames = 8,
-                first = 204
-            },
-            {
-                name = "attack",
-                dir = 4,
-                frames = 8,
-                first = 236
+                name = "death",
+                repeated = false, 
+                data = {
+                    {
+                        dir = 5,
+                        frames = 6,
+                        first = 22
+                    },
+                    {
+                        dir = 6,
+                        frames = 6,
+                        first = 54
+                    },
+                    {
+                        dir = 7,
+                        frames = 6,
+                        first = 86
+                    },
+                    {
+                        dir = 0,
+                        frames = 6,
+                        first = 118
+                    },
+                    {
+                        dir = 1,
+                        frames = 6,
+                        first = 150
+                    },
+                    {
+                        dir = 2,
+                        frames = 6,
+                        first = 182
+                    },
+                    {
+                        dir = 3,
+                        frames = 6,
+                        first = 214
+                    },
+                    {
+                        dir = 4,
+                        frames = 6,
+                        first = 246
+                    }
+                }
             }
-        }
+        } 
     }
 }

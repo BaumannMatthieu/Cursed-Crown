@@ -11,9 +11,12 @@
 #include "../Core/PlayerComponent.h"
 #include "../Core/EnemyComponent.h"
 #include "../Core/CaracteristicsComponent.h"
+#include "../Core/DamagePerSecondsComponent.h"
 #include "../Core/Player.h"
 #include "../Core/MovementComponent.h"
 #include "../Core/ManagerThreads.h"
+
+#include "../Core/InteractionSystem.h"
 
 #include "../Core/Log.h"
 #include "../Core/System.h"
@@ -38,7 +41,7 @@ class Attack {
 		        		ScriptComponentPtr script = std::static_pointer_cast<ScriptComponent>(components_entity[1]);
 
 		        		if(distance(pos_player->m_position, pos->m_position) <= 8*32.f) {
-	                        std::string thread = (*(manager_threads->m_create))(*(script->m_attack), entity, this); 
+	                        std::string thread = (*(manager_threads->m_create))(*(script->m_attack), entity, player, this); 
 	     
 	                        m_threads[entity] = thread;
 		        		}
@@ -46,6 +49,41 @@ class Attack {
 		        }
 	        }
 	    }
+		
+		void attack(EntityPtr entity, EntityPtr focus) {
+			PositionComponentPtr pos_focus = nullptr;
+			PositionComponentPtr pos_entity = nullptr;
+			std::vector<ComponentPtr> component_pos_focus;
+			std::vector<ComponentPtr> component_pos_entity;
+			if(System<Attack>::findComponent<PositionComponent>(entity, component_pos_entity)) {
+	    		pos_entity = std::static_pointer_cast<PositionComponent>(component_pos_entity[0]); 
+	    	}
+	    	if(System<Attack>::findComponent<PositionComponent>(focus, component_pos_focus)) {
+	    		pos_focus = std::static_pointer_cast<PositionComponent>(component_pos_focus[0]); 
+	    	}
+
+		    // Add a Movement Component to the player
+		    entity->deleteComponent<MovementComponent>();
+            MovementComponentPtr movement = std::make_shared<MovementComponent>();
+            movement->m_goal = pos_focus->m_position;
+            entity->addComponent<MovementComponent>(movement);
+                                        
+            std::vector<ComponentPtr> damage_component;
+            if(distance(pos_focus->m_position, pos_entity->m_position) <= 32.f) {
+            	entity->deleteComponent<MovementComponent>();
+
+            	Interaction::playAnimation(entity, "attack", Movement::getDirection(pos_focus->m_position - pos_entity->m_position));
+
+	            if(!System<Interaction>::findComponent<DamagePerSecondsComponent>(focus, damage_component)) {
+	                DamagePerSecondsComponentPtr damage = std::make_shared<DamagePerSecondsComponent>();
+	                damage->m_attacker = entity;
+	                damage->m_time = Time::clock.getElapsedTime();
+
+	                focus->addComponent<DamagePerSecondsComponent>(damage);
+	            }
+        	}
+	    }
+
 
 	    void deplace(EntityPtr entity, const sf::Vector2f& goal) {
 	    	MovementComponentPtr movement = std::make_shared<MovementComponent>();

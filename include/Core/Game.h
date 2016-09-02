@@ -4,6 +4,8 @@
 
 #include "../Core/InteractionSystem.h"
 #include "../Core/AttackSystem.h"
+#include "../Core/DamagePerSecondsSystem.h"
+#include "../Core/DeathSystem.h"
 #include "../Core/DrawSystem.h"
 #include "../Core/MovementSystem.h"
 #include "../Core/InputSystem.h"
@@ -40,7 +42,7 @@ class Game
 			m_script_manager.loadScript<ScriptEntity>(player, "player");
 			m_entity_manager.add(player);
 
-			// Add an orc which is controlled by a script when he attacks.
+			// Add an orc which is controlled by a script when he Damages.
 			EntityPtr orc = std::make_shared<Entity>();
 			// Add a position component to the player so that he can move
 			PositionComponentPtr position_orc = std::make_shared<PositionComponent>();
@@ -168,8 +170,11 @@ class Game
 
 				m_movement_system.run(entitys);
 				m_interaction_system.run(entitys);
+				m_damage_system.run(entitys);
 				m_zorder_system.run(entitys);
 				m_attack_system.run(entitys);
+
+				m_death_system.run(entitys);
 
 				m_window.clear();
 				m_draw_system.run(entitys);
@@ -188,6 +193,8 @@ class Game
 		System<Zorder>		m_zorder_system;
 		System<Input>		m_input_system;
 		System<Attack>		m_attack_system;
+		System<Damage>		m_damage_system;
+		System<Death>		m_death_system;
 
 		ScriptManager 		m_script_manager;
 };

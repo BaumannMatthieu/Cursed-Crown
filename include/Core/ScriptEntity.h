@@ -25,6 +25,7 @@ class ScriptEntity : public Script {
                         CaracteristicsComponentPtr caracts = std::make_shared<CaracteristicsComponent>();
 
                         caracts->m_name = LuaData<std::string>::wrap(*table_description, "name");
+                        LOG(caracts->m_name);
 
                         caracts->m_life = LuaData<float>::wrap(*table_description, "life");
                         caracts->m_mana = LuaData<float>::wrap(*table_description, "mana");
@@ -133,7 +134,6 @@ class ScriptEntity : public Script {
                         }
                         animation->m_animation_time = LuaData<unsigned int>::wrap(*table_animation, "animation_time");
 
-                        
                         sprite->m_width_sprite = LuaData<unsigned int>::wrap(*table_animation, "width_sprite");
                         sprite->m_height_sprite = LuaData<unsigned int>::wrap(*table_animation, "height_sprite");
 
@@ -143,44 +143,47 @@ class ScriptEntity : public Script {
                         sprite->m_origin = sf::Vector2f(LuaData<float>::wrap(*table_animation, "origin_x"),
                                                         LuaData<float>::wrap(*table_animation, "origin_y"));
 
-                        std::vector<std::shared_ptr<LuaRef>> data_animation = LuaData<std::vector<std::shared_ptr<LuaRef>>>::wrap(*table_animation, "data");
+                        std::vector<std::shared_ptr<LuaRef>> texCoords = LuaData<std::vector<std::shared_ptr<LuaRef>>>::wrap(*table_animation, "tex_coords");
 
-                        for(unsigned int i = 0; i < data_animation.size(); ++i) {
-                            AnimationPtr data = std::make_shared<Animation>();
-                            data->m_name = LuaData<std::string>::wrap(*data_animation[i], "name");
-                            data->m_direction = static_cast<MovementComponent::Direction>(LuaData<unsigned int>::wrap(*data_animation[i], "dir"));
+                        for(unsigned int i = 0; i < texCoords.size(); ++i) {
+                            
+                            std::vector<std::shared_ptr<LuaRef>> data_animation = LuaData<std::vector<std::shared_ptr<LuaRef>>>::wrap(*texCoords[i], "data");
 
-                            data->m_frames = LuaData<unsigned int>::wrap(*data_animation[i], "frames");
-                            data->m_first = LuaData<unsigned int>::wrap(*data_animation[i], "first");
+                            for(unsigned int j = 0; j < data_animation.size(); ++j) {
+                                AnimationPtr data = std::make_shared<Animation>();
+                                data->m_name = LuaData<std::string>::wrap(*texCoords[i], "name");
+                                data->m_started = false;
+                                data->m_reverse = false;
 
-                            data->m_started = false;
-                            data->m_reverse = false;
+                                data->m_repeat = LuaData<bool>::wrap(*texCoords[i], "repeated");
 
-                            data->m_repeat = LuaData<bool>::wrap(*table_animation, "repeated");
+                                data->m_direction = static_cast<MovementComponent::Direction>(LuaData<unsigned int>::wrap(*data_animation[j], "dir"));
 
-                            for(unsigned int i = 0; i < data->m_frames; ++i) {
-                                unsigned int texcoords_x = ((i + data->m_first) * sprite->m_width_sprite) % sprite->m_width_texture;
-                                unsigned int texcoords_y = ((i + data->m_first) / (sprite->m_width_texture/sprite->m_width_sprite))*sprite->m_width_sprite;
-                                
-                                //std::cout << "texcoord x : " << texcoords_x << " " << texcoords_y << std::endl;
+                                data->m_frames = LuaData<unsigned int>::wrap(*data_animation[j], "frames");
+                                data->m_first = LuaData<unsigned int>::wrap(*data_animation[j], "first");
 
-                                sf::Vector2f texCoords(texcoords_x, texcoords_y);
+                                for(unsigned int k = 0; k < data->m_frames; ++k) {
+                                    unsigned int texcoords_x = ((k + data->m_first) * sprite->m_width_sprite) % sprite->m_width_texture;
+                                    unsigned int texcoords_y = ((k + data->m_first) / (sprite->m_width_texture/sprite->m_width_sprite))*sprite->m_width_sprite;
 
-                                sf::Vector2f pos(sf::Vector2f(3200.f, 1600.f) + cart(position->m_position));
-                                pos -= sprite->m_origin;
+                                    sf::Vector2f texCoords(texcoords_x, texcoords_y);
 
-        		                sf::VertexArray vertex_array;
-        				        vertex_array.setPrimitiveType(sf::Quads);
+                                    sf::Vector2f pos(sf::Vector2f(3200.f, 1600.f) + cart(position->m_position));
+                                    pos -= sprite->m_origin;
 
-                                vertex_array.append(sf::Vertex(pos, texCoords));
-                				vertex_array.append(sf::Vertex(pos + sf::Vector2f(sprite->m_width_sprite, 0.f), texCoords + sf::Vector2f(sprite->m_width_sprite, 0.f)));
-                				vertex_array.append(sf::Vertex(sf::Vector2f(pos + sf::Vector2f(sprite->m_width_sprite, sprite->m_height_sprite)), texCoords + sf::Vector2f(sprite->m_width_sprite, sprite->m_height_sprite)));
-                				vertex_array.append(sf::Vertex(sf::Vector2f(pos + sf::Vector2f(0.f, sprite->m_height_sprite)), texCoords + sf::Vector2f(0.f, sprite->m_height_sprite)));
+            		                sf::VertexArray vertex_array;
+            				        vertex_array.setPrimitiveType(sf::Quads);
 
-                                data->m_vertex_arrays.push_back(vertex_array);
+                                    vertex_array.append(sf::Vertex(pos, texCoords));
+                    				vertex_array.append(sf::Vertex(pos + sf::Vector2f(sprite->m_width_sprite, 0.f), texCoords + sf::Vector2f(sprite->m_width_sprite, 0.f)));
+                    				vertex_array.append(sf::Vertex(sf::Vector2f(pos + sf::Vector2f(sprite->m_width_sprite, sprite->m_height_sprite)), texCoords + sf::Vector2f(sprite->m_width_sprite, sprite->m_height_sprite)));
+                    				vertex_array.append(sf::Vertex(sf::Vector2f(pos + sf::Vector2f(0.f, sprite->m_height_sprite)), texCoords + sf::Vector2f(0.f, sprite->m_height_sprite)));
+
+                                    data->m_vertex_arrays.push_back(vertex_array);
+                                }
+                                std::pair<std::string, MovementComponent::Direction> key(data->m_name, data->m_direction);
+                                animation->m_animations.insert(std::pair<std::pair<std::string, MovementComponent::Direction>, AnimationPtr>(key, data));
                             }
-                            std::pair<std::string, MovementComponent::Direction> key(data->m_name, data->m_direction);
-                            animation->m_animations.insert(std::pair<std::pair<std::string, MovementComponent::Direction>, AnimationPtr>(key, data));
                         }
                         animation->m_animation_key = std::pair<std::string, MovementComponent::Direction>("stance", MovementComponent::Direction::SE);
 
