@@ -10,6 +10,7 @@
 #include "../Core/MovementSystem.h"
 #include "../Core/InputSystem.h"
 #include "../Core/ZorderSystem.h"
+#include "../Core/FrameUI.h"
 
 #include "../Core/EntityManager.h"
 #include "../Core/ScriptManager.h"
@@ -72,6 +73,9 @@ class Game
 
 			// Set up the coroutines manager by loading the wait.lua script
 			m_script_manager.loadThreadsScript("thread");
+
+			// Init frame
+			m_frame = std::make_shared<UI::Frame>(75, 400);
 		}
 
 		void addObjectsEntities(EntityPtr map) {
@@ -176,8 +180,11 @@ class Game
 
 				m_death_system.run(entitys);
 
+				m_frame->update();
+
 				m_window.clear();
 				m_draw_system.run(entitys);
+				m_frame->draw(m_window);
 				m_window.display();
 			}
 		}
@@ -197,5 +204,7 @@ class Game
 		System<Death>		m_death_system;
 
 		ScriptManager 		m_script_manager;
+
+		UI::FramePtr 		m_frame;
 };
 

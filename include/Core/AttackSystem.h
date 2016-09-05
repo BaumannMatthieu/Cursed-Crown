@@ -36,15 +36,24 @@ class Attack {
 	        for(auto entity : entitys) {
 	        	if((*manager_threads->m_terminated)(m_threads[entity])) {
 		        	std::vector<ComponentPtr> components_entity;
+		        	
 		        	if(System<Attack>::findComponent<PositionComponent, ScriptComponent, EnemyComponent, CaracteristicsComponent>(entity, components_entity)) {
-		        		PositionComponentPtr pos = std::static_pointer_cast<PositionComponent>(components_entity[0]); 
-		        		ScriptComponentPtr script = std::static_pointer_cast<ScriptComponent>(components_entity[1]);
+		        		if(!System<Attack>::findComponent<DeathComponent>(player, components_entity)) {
+			        		PositionComponentPtr pos = std::static_pointer_cast<PositionComponent>(components_entity[0]); 
+			        		ScriptComponentPtr script = std::static_pointer_cast<ScriptComponent>(components_entity[1]);
 
-		        		if(distance(pos_player->m_position, pos->m_position) <= 8*32.f) {
-	                        std::string thread = (*(manager_threads->m_create))(*(script->m_attack), entity, player, this); 
-	     
-	                        m_threads[entity] = thread;
-		        		}
+			        		if(distance(pos_player->m_position, pos->m_position) <= 8*32.f) {
+		                        std::string thread = (*(manager_threads->m_create))(*(script->m_attack), entity, player, this); 
+		     
+		                        m_threads[entity] = thread;
+			        		}
+		        		} else {
+			            	std::vector<ComponentPtr> component_anim_entity;
+							if(System<Attack>::findComponent<AnimatedComponent>(entity, component_anim_entity)) {
+					    		AnimatedComponentPtr anim = std::static_pointer_cast<AnimatedComponent>(component_anim_entity[0]); 
+					    		Interaction::playAnimation(entity, "stance", anim->m_animation_key.second);
+					    	}
+			            }
 		            }
 		        }
 	        }
@@ -78,12 +87,12 @@ class Attack {
 	                DamagePerSecondsComponentPtr damage = std::make_shared<DamagePerSecondsComponent>();
 	                damage->m_attacker = entity;
 	                damage->m_time = Time::clock.getElapsedTime();
+	                damage->m_start = true;
 
 	                focus->addComponent<DamagePerSecondsComponent>(damage);
 	            }
         	}
 	    }
-
 
 	    void deplace(EntityPtr entity, const sf::Vector2f& goal) {
 	    	MovementComponentPtr movement = std::make_shared<MovementComponent>();

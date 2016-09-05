@@ -84,6 +84,7 @@ class Interaction {
                                             DamagePerSecondsComponentPtr damage = std::make_shared<DamagePerSecondsComponent>();
                                             damage->m_attacker = player;
                                             damage->m_time = Time::clock.getElapsedTime();
+                                            damage->m_start = true;
 
                                             entity->addComponent<DamagePerSecondsComponent>(damage);
                                         }

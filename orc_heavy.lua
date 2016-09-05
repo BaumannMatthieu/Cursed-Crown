@@ -236,11 +236,9 @@ character = {
                 --    print("Mouarg, you hurt me !")
                 --end
             --end
-
-            script:attack(orc, focus)
            
             while not dead(focus) do
-
+                script:attack(orc, focus)
                 wait(50)
             end
 

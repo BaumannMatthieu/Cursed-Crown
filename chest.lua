@@ -1,5 +1,5 @@
 character = {
-    animation = {
+        animation = {
         name = "Chest",
         image = "data/animations/misci/chest.png",
         animation_time = 1000,
